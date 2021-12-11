@@ -51,7 +51,7 @@ resource "aws_lb_target_group" "jenkins_tglb" {
     unhealthy_threshold = "2"
     timeout             = "5"
     interval            = "30"
-    matcher             = "200"
+    matcher             = "200,403"
   }
 }
 resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
