@@ -34,8 +34,8 @@ resource "aws_lb" "jenkinslb" {
 resource "aws_key_pair" "mykeypair" {
   key_name   = "mykeypair"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC98/ZrwBNqrQ662KrQGnUxUXg9EInl0rJP5OTVXzVoM+8gtD84Mgwap6L3NvC3BLRIzAjMb07P20CqOF8b+UVUT8Xoo4NKtkEZRyRLWcZQX8pIU/HcH1euejlC1w7SO5tlq5EY56TwF9oTIRzROwE3TkaKDpP27bQFZBVvoFnRBwwPWeP4BqmCZGk3THQOLoHkLNI0exX1ekSi/VrgWv7K38BIuDNQWzN75Yi5ZeLMYx50EAzIRtPqZgjJU9w3RjlDQCZr/y5epwc3+25SPU5V1+lIA5YeKQyFv/h9rVOajwfxdurq7ErpSV3mCh026Kdi9PS9SN5QaChKR4hxy2fgsWhzOMU89LoWx9q4Ho7zesQWUcapWiEVFRB6olN7IcVd7DpNy/JvCEAkTHj664LITV4NZla4mBea8pwPiZWRBkJo2RoC1Oz6m1H8xWn6l0KNhRiJzzxKzSreUZATh6gYZz4J32CyaLEVYHq0NncL5PjaPmiLvbpZbke0aL/6abs= lbena@LAPTOP-QB0DU4OG"
-"
 }
+
 ###------- ALB Health Check -------###
 resource "aws_lb_target_group" "jenkins_tglb" {
   name     = join("-", [local.application.app_name, "jenkinstglb"])
