@@ -33,7 +33,8 @@ resource "aws_lb" "jenkinslb" {
 }
 resource "aws_key_pair" "mykeypair" {
   key_name   = "mykeypair"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCh/vBaoONyADNNkw+gzEIu8ZCOVT/aSzwSXWum93D03p9/49/OzI0CaxtE+mlNszQRfNBjh+AxPQcjep96TfhSVBY+IlEvA1MSeuDA4dcTdjo1hsZvIfcSKcz3NyLudlx55+Wtf6PbbmZrvKDNwovuStW3PSlRcMDL8N8lPvcyuusCn+iyQRgN9kkWLpf2pz9NJzzgxhcvUyNC+OmwNWLpJA2PSAmvApAXufqj2Q0g4JPRsZRUpXIgA1G/4IAy5JS0cO/fJJ8S57mZcx8lt5/AyDvHD+8CeJ7IcxaFIlktMb447DTbDi8fsHkJl3k/Cyv7AW1R4EsWlS6aEI8iJfLTZiI7mFXSh2wQ00pjgV9K97VEi4XfCih7GvQVce961F9kEQzoC88Nh50t76CKP5F8u21b2f4a7FXq/G5OFpOlm5MsXIf4jaLIP423q/KG0kpkISF4YSIjInI5JotmY8X0uTLqRuISi3NdXm5a3xwQEE4nnItqtZThga8FKYuU2LU= lbena@LAPTOP-QB0DU4OG"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC98/ZrwBNqrQ662KrQGnUxUXg9EInl0rJP5OTVXzVoM+8gtD84Mgwap6L3NvC3BLRIzAjMb07P20CqOF8b+UVUT8Xoo4NKtkEZRyRLWcZQX8pIU/HcH1euejlC1w7SO5tlq5EY56TwF9oTIRzROwE3TkaKDpP27bQFZBVvoFnRBwwPWeP4BqmCZGk3THQOLoHkLNI0exX1ekSi/VrgWv7K38BIuDNQWzN75Yi5ZeLMYx50EAzIRtPqZgjJU9w3RjlDQCZr/y5epwc3+25SPU5V1+lIA5YeKQyFv/h9rVOajwfxdurq7ErpSV3mCh026Kdi9PS9SN5QaChKR4hxy2fgsWhzOMU89LoWx9q4Ho7zesQWUcapWiEVFRB6olN7IcVd7DpNy/JvCEAkTHj664LITV4NZla4mBea8pwPiZWRBkJo2RoC1Oz6m1H8xWn6l0KNhRiJzzxKzSreUZATh6gYZz4J32CyaLEVYHq0NncL5PjaPmiLvbpZbke0aL/6abs= lbena@LAPTOP-QB0DU4OG
+"
 }
 ###------- ALB Health Check -------###
 resource "aws_lb_target_group" "jenkins_tglb" {
@@ -53,12 +54,11 @@ resource "aws_lb_target_group" "jenkins_tglb" {
     matcher             = "200"
   }
 }
-
-# resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
-#   target_group_arn = aws_lb_target_group.jenkins_tglb.arn
-#   target_id        = aws_instance.jenkinsserver.id
-#   port             = 8080
-# }
+resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
+  target_group_arn = aws_lb_target_group.jenkins_tglb.arn
+  target_id        = aws_instance.jenkinsserver.id
+  port             = 8080
+}
 
 # ####-------- SSL Cert ------#####
 # resource "aws_lb_listener" "jenkins_lblist2" {
