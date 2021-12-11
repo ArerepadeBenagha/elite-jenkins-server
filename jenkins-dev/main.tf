@@ -1,0 +1,289 @@
+###########------ jenkins Server -----########
+resource "aws_instance" "jenkinsserver" {
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = var.instance_type
+  subnet_id              = aws_subnet.main-public-1.id
+  key_name               = aws_key_pair.mykeypair.key_name
+  vpc_security_group_ids = [aws_security_group.ec2-sg.id, aws_security_group.main-alb.id]
+  user_data_base64       = data.cloudinit_config.userdata.rendered
+  lifecycle {
+    ignore_changes = [ami, user_data_base64]
+  }
+  tags = merge(local.common_tags,
+    { Name = "jenkins-server"
+  Application = "public" })
+}
+###-------- ALB -------###
+resource "aws_lb" "jenkinslb" {
+  name               = join("-", [local.application.app_name, "jenkinslb"])
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.ec2-sg.id, aws_security_group.main-alb.id]
+  subnets            = [aws_subnet.main-public-1.id, aws_subnet.main-public-2.id]
+  idle_timeout       = "60"
+
+  access_logs {
+    bucket  = aws_s3_bucket.logs_s3dev.bucket
+    prefix  = join("-", [local.application.app_name, "jenkinslb-s3logs"])
+    enabled = true
+  }
+  tags = merge(local.common_tags,
+    { Name = "jenkinsserver"
+  Application = "public" })
+}
+resource "aws_key_pair" "mykeypair" {
+  key_name   = "mykeypair"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCh/vBaoONyADNNkw+gzEIu8ZCOVT/aSzwSXWum93D03p9/49/OzI0CaxtE+mlNszQRfNBjh+AxPQcjep96TfhSVBY+IlEvA1MSeuDA4dcTdjo1hsZvIfcSKcz3NyLudlx55+Wtf6PbbmZrvKDNwovuStW3PSlRcMDL8N8lPvcyuusCn+iyQRgN9kkWLpf2pz9NJzzgxhcvUyNC+OmwNWLpJA2PSAmvApAXufqj2Q0g4JPRsZRUpXIgA1G/4IAy5JS0cO/fJJ8S57mZcx8lt5/AyDvHD+8CeJ7IcxaFIlktMb447DTbDi8fsHkJl3k/Cyv7AW1R4EsWlS6aEI8iJfLTZiI7mFXSh2wQ00pjgV9K97VEi4XfCih7GvQVce961F9kEQzoC88Nh50t76CKP5F8u21b2f4a7FXq/G5OFpOlm5MsXIf4jaLIP423q/KG0kpkISF4YSIjInI5JotmY8X0uTLqRuISi3NdXm5a3xwQEE4nnItqtZThga8FKYuU2LU= lbena@LAPTOP-QB0DU4OG"
+}
+###------- ALB Health Check -------###
+resource "aws_lb_target_group" "jenkins_tglb" {
+  name     = join("-", [local.application.app_name, "jenkinstglb"])
+  port     = 8080
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.main.id
+
+  health_check {
+    path                = "/"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    healthy_threshold   = "5"
+    unhealthy_threshold = "2"
+    timeout             = "5"
+    interval            = "30"
+    matcher             = "200"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
+  target_group_arn = aws_lb_target_group.jenkins_tglb.arn
+  target_id        = aws_instance.jenkinsserver.id
+  port             = 8080
+}
+
+####-------- SSL Cert ------#####
+resource "aws_lb_listener" "jenkins_lblist2" {
+  load_balancer_arn = aws_lb.jenkinslb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = "arn:aws:acm:us-east-1:901445516958:certificate/5d6c9408-19a3-4227-91ae-401a7709bca3"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.jenkins_tglb.arn
+  }
+}
+
+####---- Redirect Rule -----####
+resource "aws_lb_listener" "jenkins_lblist" {
+  load_balancer_arn = aws_lb.jenkinslb.arn
+  port              = "8080"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+########------- S3 Bucket -----------####
+resource "aws_s3_bucket" "logs_s3dev" {
+  bucket = join("-", [local.application.app_name, "logdev"])
+  acl    = "private"
+
+  tags = merge(local.common_tags,
+    { Name = "jenkinsserver"
+  bucket = "private" })
+}
+resource "aws_s3_bucket_policy" "logs_s3dev" {
+  bucket = aws_s3_bucket.logs_s3dev.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "MYBUCKETPOLICY"
+    Statement = [
+      {
+        Sid       = "Allow"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:*"
+        Resource = [
+          aws_s3_bucket.logs_s3dev.arn,
+          "${aws_s3_bucket.logs_s3dev.arn}/*",
+        ]
+        Condition = {
+          NotIpAddress = {
+            "aws:SourceIp" = "8.8.8.8/32"
+          }
+        }
+      },
+    ]
+  })
+}
+
+#IAM
+resource "aws_iam_role" "jenkins_role" {
+  name = join("-", [local.application.app_name, "jenkinsrole"])
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  tags = merge(local.common_tags,
+    { Name = "jenkinsserver"
+  Role = "jenkinsrole" })
+}
+
+#######------- IAM Role ------######
+resource "aws_iam_role_policy" "jenkins_policy" {
+  name = join("-", [local.application.app_name, "jenkinspolicy"])
+  role = aws_iam_role.jenkins_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ec2:Describe*",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+#####------ Certificate -----------####
+resource "aws_acm_certificate" "jenkinscert" {
+  domain_name       = "*.elietesolutionsit.de"
+  validation_method = "DNS"
+  lifecycle {
+    create_before_destroy = true
+  }
+  tags = merge(local.common_tags,
+    { Name = "elite-jenkins-server.elietesolutionsit.de"
+  Cert = "jenkinscert" })
+}
+
+###------- Cert Validation -------###
+data "aws_route53_zone" "main-zone" {
+  name         = "elietesolutionsit.de"
+  private_zone = false
+}
+
+resource "aws_route53_record" "jenkinszone_record" {
+  for_each = {
+    for dvo in aws_acm_certificate.jenkinscert.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.main-zone.zone_id
+}
+
+resource "aws_acm_certificate_validation" "jenkinscert" {
+  certificate_arn         = aws_acm_certificate.jenkinscert.arn
+  validation_record_fqdns = [for record in aws_route53_record.jenkinszone_record : record.fqdn]
+}
+
+##------- ALB Alias record ----------##
+resource "aws_route53_record" "www" {
+  zone_id = data.aws_route53_zone.main-zone.zone_id
+  name    = "elite-jenkins-devserver.elietesolutionsit.de"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.jenkinslb.dns_name
+    zone_id                = aws_lb.jenkinslb.zone_id
+    evaluate_target_health = true
+  }
+}
+
+#EC2-SG
+resource "aws_security_group" "ec2-sg" {
+  vpc_id      = aws_vpc.main.id
+  name        = "public web jenkins sg"
+  description = "security group Ec2-server"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.main-alb.id]
+  }
+
+  ingress {
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.main-alb.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.common_tags,
+  { Name = "Ec2 security group" })
+}
+
+#ALB-SG
+resource "aws_security_group" "main-alb" {
+  vpc_id      = aws_vpc.main.id
+  name        = "public web allow"
+  description = "security group for ALB"
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.common_tags,
+  { Name = "Alb security group" })
+}
