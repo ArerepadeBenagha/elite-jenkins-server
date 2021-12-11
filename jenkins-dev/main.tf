@@ -54,24 +54,24 @@ resource "aws_lb_target_group" "jenkins_tglb" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
-  target_group_arn = aws_lb_target_group.jenkins_tglb.arn
-  target_id        = aws_instance.jenkinsserver.id
-  port             = 8080
-}
+# resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
+#   target_group_arn = aws_lb_target_group.jenkins_tglb.arn
+#   target_id        = aws_instance.jenkinsserver.id
+#   port             = 8080
+# }
 
-####-------- SSL Cert ------#####
-resource "aws_lb_listener" "jenkins_lblist2" {
-  load_balancer_arn = aws_lb.jenkinslb.arn
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = "arn:aws:acm:us-east-1:901445516958:certificate/5d6c9408-19a3-4227-91ae-401a7709bca3"
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.jenkins_tglb.arn
-  }
-}
+# ####-------- SSL Cert ------#####
+# resource "aws_lb_listener" "jenkins_lblist2" {
+#   load_balancer_arn = aws_lb.jenkinslb.arn
+#   port              = "443"
+#   protocol          = "HTTPS"
+#   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+#   certificate_arn   = "arn:aws:acm:us-east-1:901445516958:certificate/5d6c9408-19a3-4227-91ae-401a7709bca3"
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.jenkins_tglb.arn
+#   }
+# }
 
 ####---- Redirect Rule -----####
 resource "aws_lb_listener" "jenkins_lblist" {
