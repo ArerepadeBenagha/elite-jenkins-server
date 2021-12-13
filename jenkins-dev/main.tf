@@ -66,7 +66,7 @@ resource "aws_lb_listener" "jenkins_lblist2" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = "arn:aws:acm:us-east-1:901445516958:certificate/f01d0c52-1ee7-45b0-b268-5b6ef4db876f"
+  certificate_arn   = "arn:aws:acm:us-east-1:901445516958:certificate/63985857-f21d-4d3b-8f74-2ac40f42cf38"
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.jenkins_tglb.arn
