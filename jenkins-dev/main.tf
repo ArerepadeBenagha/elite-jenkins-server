@@ -73,6 +73,7 @@ resource "aws_lb_listener" "jenkins_lblist2" {
   }
 }
 
+
 ####---- Redirect Rule -----####
 resource "aws_lb_listener" "jenkins_lblist" {
   load_balancer_arn = aws_lb.jenkinslb.arn
