@@ -1,0 +1,25 @@
+
+---
+- hosts: all
+
+  become: yes
+  gather_facts: yes
+  tasks:
+
+    - action: ping
+    - name: install JDK
+      apt: name=default-jdk update_cache=yes state=latest
+
+    - name: download sonarqube community version 
+      shell: wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.3.zip
+
+    - name: install unzip
+      apt: name=unzip update_cache=yes state=latest
+
+    - name: unzip sonarqube 
+      shell: unzip sonarqube-7.3.zip
+
+    - name: setup sonatype-work permissions 
+      shell: chown -R ubuntu:ubuntu sonarqube-7.3/
+    
+    
