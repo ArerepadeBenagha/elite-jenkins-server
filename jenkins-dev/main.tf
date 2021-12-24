@@ -60,6 +60,31 @@ resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
   port             = 8080
 }
 
+////sonarqube
+resource "aws_lb_target_group_attachment" "sonar_tglbat" {
+  target_group_arn = aws_lb_target_group.jenkins_tglb.arn
+  target_id        = aws_instance.jenkinsserver.id
+  port             = 9000
+}
+resource "aws_lb_target_group" "sonar_tglb" {
+  name     = join("-", [local.application.app_name, "sonartglb"])
+  port     = 9000
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.main.id
+
+  health_check {
+    path                = "/"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    healthy_threshold   = "5"
+    unhealthy_threshold = "2"
+    timeout             = "5"
+    interval            = "30"
+    matcher             = "200,403"
+  }
+}
+
+
 # # ####-------- SSL Cert ------#####
 resource "aws_lb_listener" "jenkins_lblist2" {
   load_balancer_arn = aws_lb.jenkinslb.arn
