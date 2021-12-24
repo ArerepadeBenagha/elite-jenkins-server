@@ -169,19 +169,19 @@ resource "aws_iam_role_policy" "jenkins_policy" {
 
 #####------ Certificate -----------####
 resource "aws_acm_certificate" "jenkinscert" {
-  domain_name       = "*.elietesolutionsit.de"
+  domain_name       = "*.elitelabtools.com"
   validation_method = "DNS"
   lifecycle {
     create_before_destroy = true
   }
   tags = merge(local.common_tags,
-    { Name = "elite-jenkins-server.elietesolutionsit.de"
+    { Name = "elite-jenkins-server.elitelabtools.com"
   Cert = "jenkinscert" })
 }
 
 ###------- Cert Validation -------###
 data "aws_route53_zone" "main-zone" {
-  name         = "elietesolutionsit.de"
+  name         = "elitelabtools.com"
   private_zone = false
 }
 
@@ -210,7 +210,7 @@ resource "aws_acm_certificate_validation" "jenkinscert" {
 ##------- ALB Alias record ----------##
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.main-zone.zone_id
-  name    = "elite-jenkins-devserver.elietesolutionsit.de"
+  name    = "elite-jenkins-devserver.elitelabtools.com"
   type    = "A"
 
   alias {
