@@ -115,7 +115,7 @@ resource "aws_lb_listener" "jenkins_lblist" {
   }
 }
 ///sonarqube
-resource "aws_lb_listener" "jenkins_lblist" {
+resource "aws_lb_listener" "sonar_lblist" {
   load_balancer_arn = aws_lb.jenkinslb.arn
   port              = "9000"
   protocol          = "HTTP"
@@ -130,7 +130,7 @@ resource "aws_lb_listener" "jenkins_lblist" {
   }
 }
 /////sonar
-resource "aws_lb_listener" "sonar_lblist3" {
+resource "aws_lb_listener" "sonar_lblist" {
   load_balancer_arn = aws_lb.jenkinslb.arn
   port              = "443"
   protocol          = "HTTPS"
