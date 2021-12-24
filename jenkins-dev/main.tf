@@ -129,18 +129,6 @@ resource "aws_lb_listener" "sonar_lblist" {
     }
   }
 }
-/////sonar
-resource "aws_lb_listener" "sonar_lblist3" {
-  load_balancer_arn = aws_lb.jenkinslb.arn
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/f3e1c14c-94cb-4c7f-b150-df5996c52f18"
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.sonar_tglb.arn
-  }
-}
 
 ########------- S3 Bucket -----------####
 resource "aws_s3_bucket" "logs_s3dev" {
