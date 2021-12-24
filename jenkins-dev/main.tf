@@ -51,7 +51,7 @@ resource "aws_lb_target_group" "jenkins_tglb" {
     unhealthy_threshold = "2"
     timeout             = "5"
     interval            = "30"
-    matcher             = "200,403"
+    matcher             = "200"
   }
 }
 resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
@@ -62,7 +62,7 @@ resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
 
 ////sonarqube
 resource "aws_lb_target_group_attachment" "sonar_tglbat" {
-  target_group_arn = aws_lb_target_group.jenkins_tglb.arn
+  target_group_arn = aws_lb_target_group.sonar_tglb.arn
   target_id        = aws_instance.jenkinsserver.id
   port             = 9000
 }
@@ -80,7 +80,7 @@ resource "aws_lb_target_group" "sonar_tglb" {
     unhealthy_threshold = "2"
     timeout             = "5"
     interval            = "30"
-    matcher             = "200,403"
+    matcher             = "200"
   }
 }
 
