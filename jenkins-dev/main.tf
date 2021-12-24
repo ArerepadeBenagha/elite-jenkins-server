@@ -246,6 +246,13 @@ resource "aws_security_group" "ec2-sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.main-alb.id]
   }
+  /////sonarqubeSG
+  ingress {
+    from_port       = 9000
+    to_port         = 9000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.main-alb.id]
+  }
 
   egress {
     from_port   = 0
