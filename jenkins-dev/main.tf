@@ -130,7 +130,7 @@ resource "aws_lb_listener" "sonar_lblist" {
   }
 }
 /////sonar
-resource "aws_lb_listener" "sonar_lblist" {
+resource "aws_lb_listener" "sonar_lblist3" {
   load_balancer_arn = aws_lb.jenkinslb.arn
   port              = "443"
   protocol          = "HTTPS"
