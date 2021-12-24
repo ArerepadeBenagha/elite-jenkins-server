@@ -20,7 +20,7 @@ resource "aws_lb" "jenkinslb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.ec2-sg.id, aws_security_group.main-alb.id]
   subnets            = [aws_subnet.main-public-1.id, aws_subnet.main-public-2.id]
-  idle_timeout       = "60"
+  idle_timeout       = "120"
 
   access_logs {
     bucket  = aws_s3_bucket.logs_s3dev.bucket
