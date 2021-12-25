@@ -23,3 +23,6 @@ data "aws_ami" "ubuntu" {
 
   owners = ["099720109477"] # Canonical
 }
+data "aws_key_pair" "key" {
+  key_name = "jenkins_key"
+}

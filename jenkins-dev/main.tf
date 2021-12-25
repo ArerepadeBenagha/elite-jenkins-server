@@ -3,7 +3,7 @@ resource "aws_instance" "jenkinsserver" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.main-public-1.id
-  key_name               = aws_key_pair.mykeypair.key_name
+  key_name               = data.aws_key_pair.key
   vpc_security_group_ids = [aws_security_group.ec2-sg.id, aws_security_group.main-alb.id]
   user_data_base64       = data.cloudinit_config.userdata.rendered
   lifecycle {
@@ -31,10 +31,10 @@ resource "aws_lb" "jenkinslb" {
     { Name = "jenkinsserver"
   Application = "public" })
 }
-resource "aws_key_pair" "mykeypair" {
-  key_name   = "mykeypair"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDxeI/h3jbD1x27G1CDm6xJDcpfZ31KUBWSKyxOWyhIOF0zxDnDYH/Pjd+DX6e4rMlmVEWIxef93H446RnryyoFbZ1afud0/s0LbVYbEozqp68QLPCgqMBIUlLv7tnsyiObkC8xESd18576d8tn1zNlzVLuCjO/iGWwP1n9MBO18gefOhQVdqmq7qU/90h0G30fjmMCf5D0/crYrsxoNrkElA4hH7LGkQs9oFqU7KIyI7lRG+NLSrIoqyI2cRbg7DZypRDOIn3ncBpbG9lTcIiZTn12EpHvYAbNk7+FXx9WRWDEqr3yGeWSrQNlC2uXSgiHVuTiQpnjO3aDAMKlZZWkukV+AZ1ZNtyjCZEZP20k7WaUYTsbvMpRDuIUy4Z9m+x6aKchJLbocO0MsrjatEWuU1UXaeFA04BLwLUWgb2pbtW+IueMunq4Ql8vx4mGHO7J3svOwhrntzHJewAxu7lZOHaB1f/piXTO3a/7HWc5x9JZtvU+pjervEysueEWlAM= lbena@LAPTOP-QB0DU4OG"
-}
+# resource "aws_key_pair" "mykeypair" {
+#   key_name   = "mykeypair"
+#   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDxeI/h3jbD1x27G1CDm6xJDcpfZ31KUBWSKyxOWyhIOF0zxDnDYH/Pjd+DX6e4rMlmVEWIxef93H446RnryyoFbZ1afud0/s0LbVYbEozqp68QLPCgqMBIUlLv7tnsyiObkC8xESd18576d8tn1zNlzVLuCjO/iGWwP1n9MBO18gefOhQVdqmq7qU/90h0G30fjmMCf5D0/crYrsxoNrkElA4hH7LGkQs9oFqU7KIyI7lRG+NLSrIoqyI2cRbg7DZypRDOIn3ncBpbG9lTcIiZTn12EpHvYAbNk7+FXx9WRWDEqr3yGeWSrQNlC2uXSgiHVuTiQpnjO3aDAMKlZZWkukV+AZ1ZNtyjCZEZP20k7WaUYTsbvMpRDuIUy4Z9m+x6aKchJLbocO0MsrjatEWuU1UXaeFA04BLwLUWgb2pbtW+IueMunq4Ql8vx4mGHO7J3svOwhrntzHJewAxu7lZOHaB1f/piXTO3a/7HWc5x9JZtvU+pjervEysueEWlAM= lbena@LAPTOP-QB0DU4OG"
+# }
 
 ###------- ALB Health Check -------###
 resource "aws_lb_target_group" "jenkins_tglb" {
