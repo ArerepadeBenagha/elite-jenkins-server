@@ -27,7 +27,7 @@ sudo systemctl enable postgresql
 cd /tmp
 wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.6.50800.zip
 sudo unzip sonarqube-8.9.6.50800.zip -d /opt
-sudo mv /opt/ sonarqube-8.9.6.50800 /opt/sonarqube
+sudo mv /opt/sonarqube-8.9.6.50800 /opt/sonarqube
 sudo groupadd sonar
 sudo useradd -c "user to run SonarQube" -d /opt/sonarqube -g sonar sonar
 sudo chown sonar:sonar /opt/sonarqube -R
