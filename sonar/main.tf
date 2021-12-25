@@ -61,17 +61,17 @@ resource "aws_lb_target_group_attachment" "sonar_tglbat" {
 }
 
 # # ####-------- SSL Cert ------#####
-# resource "aws_lb_listener" "sonar_lblist2" {
-#   load_balancer_arn = aws_lb.sonarlb.arn
-#   port              = "443"
-#   protocol          = "HTTPS"
-#   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-#   certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/b7786399-24a2-4dae-bae9-0421046d146c"
-#   default_action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.sonar_tglb.arn
-#   }
-# }
+resource "aws_lb_listener" "sonar_lblist2" {
+  load_balancer_arn = aws_lb.sonarlb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/4b2acaa0-0f6b-4f27-a191-6fd32d55efa6"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.sonar_tglb.arn
+  }
+}
 
 ####---- Redirect Rule -----####
 resource "aws_lb_listener" "sonar_lblist" {
