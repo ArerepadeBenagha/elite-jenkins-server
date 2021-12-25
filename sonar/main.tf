@@ -37,30 +37,30 @@ resource "aws_key_pair" "mykeypair" {
 }
 
 # ###------- ALB Health Check -------###
-# resource "aws_lb_target_group" "sonar_tglb" {
-#   name     = join("-", [local.application.app_name, "sonartglb"])
-#   port     = 9000
-#   protocol = "HTTP"
-#   vpc_id   = aws_vpc.main.id
+resource "aws_lb_target_group" "sonar_tglb" {
+  name     = join("-", [local.application.app_name, "sonartglb"])
+  port     = 9000
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.main.id
 
-#   health_check {
-#     path                = "/"
-#     port                = "traffic-port"
-#     protocol            = "HTTP"
-#     healthy_threshold   = "5"
-#     unhealthy_threshold = "2"
-#     timeout             = "5"
-#     interval            = "30"
-#     matcher             = "200,403"
-#   }
-# }
-# resource "aws_lb_target_group_attachment" "sonar_tglbat" {
-#   target_group_arn = aws_lb_target_group.sonar_tglb.arn
-#   target_id        = aws_instance.sonarserver.id
-#   port             = 9000
-# }
+  health_check {
+    path                = "/"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    healthy_threshold   = "5"
+    unhealthy_threshold = "2"
+    timeout             = "5"
+    interval            = "30"
+    matcher             = "200"
+  }
+}
+resource "aws_lb_target_group_attachment" "sonar_tglbat" {
+  target_group_arn = aws_lb_target_group.sonar_tglb.arn
+  target_id        = aws_instance.sonarserver.id
+  port             = 9000
+}
 
-# # # ####-------- SSL Cert ------#####
+# # ####-------- SSL Cert ------#####
 # resource "aws_lb_listener" "sonar_lblist2" {
 #   load_balancer_arn = aws_lb.sonarlb.arn
 #   port              = "443"
@@ -73,21 +73,21 @@ resource "aws_key_pair" "mykeypair" {
 #   }
 # }
 
-# ####---- Redirect Rule -----####
-# resource "aws_lb_listener" "sonar_lblist" {
-#   load_balancer_arn = aws_lb.sonarlb.arn
-#   port              = "9000"
-#   protocol          = "HTTP"
+####---- Redirect Rule -----####
+resource "aws_lb_listener" "sonar_lblist" {
+  load_balancer_arn = aws_lb.sonarlb.arn
+  port              = "9000"
+  protocol          = "HTTP"
 
-#   default_action {
-#     type = "redirect"
-#     redirect {
-#       port        = "443"
-#       protocol    = "HTTPS"
-#       status_code = "HTTP_301"
-#     }
-#   }
-# }
+  default_action {
+    type = "redirect"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
 
 ########------- S3 Bucket -----------####
 resource "aws_s3_bucket" "logs_s3dev" {
@@ -242,6 +242,13 @@ resource "aws_security_group" "ec2-sg" {
   ingress {
     from_port       = 443
     to_port         = 443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.main-alb.id]
+  }
+
+    ingress {
+    from_port       = 5432
+    to_port         = 5432
     protocol        = "tcp"
     security_groups = [aws_security_group.main-alb.id]
   }
