@@ -51,7 +51,7 @@ resource "aws_lb_target_group" "jenkins_tglb" {
     unhealthy_threshold = "2"
     timeout             = "5"
     interval            = "30"
-    matcher             = "200,403"
+    matcher             = "200"
   }
 }
 resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
@@ -60,63 +60,23 @@ resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
   port             = 8080
 }
 
-////sonarqube
-resource "aws_lb_target_group_attachment" "sonar_tglbat" {
-  target_group_arn = aws_lb_target_group.sonar_tglb.arn
-  target_id        = aws_instance.jenkinsserver.id
-  port             = 4040
-}
-resource "aws_lb_target_group" "sonar_tglb" {
-  name     = join("-", [local.application.app_name, "sonartglb"])
-  port     = 4040
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
-
-  health_check {
-    path                = "/"
-    port                = "traffic-port"
-    protocol            = "HTTP"
-    healthy_threshold   = "5"
-    unhealthy_threshold = "2"
-    timeout             = "5"
-    interval            = "30"
-    matcher             = "200"
-  }
-}
-
-
 # # ####-------- SSL Cert ------#####
-resource "aws_lb_listener" "jenkins_lblist2" {
-  load_balancer_arn = aws_lb.jenkinslb.arn
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/f3e1c14c-94cb-4c7f-b150-df5996c52f18"
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.jenkins_tglb.arn
-  }
-}
+# resource "aws_lb_listener" "jenkins_lblist2" {
+#   load_balancer_arn = aws_lb.jenkinslb.arn
+#   port              = "443"
+#   protocol          = "HTTPS"
+#   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+#   certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/f3e1c14c-94cb-4c7f-b150-df5996c52f18"
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.jenkins_tglb.arn
+#   }
+# }
 
 ####---- Redirect Rule -----####
 resource "aws_lb_listener" "jenkins_lblist" {
   load_balancer_arn = aws_lb.jenkinslb.arn
   port              = "8080"
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
-///sonarqube
-resource "aws_lb_listener" "sonar_lblist" {
-  load_balancer_arn = aws_lb.jenkinslb.arn
-  port              = "4040"
   protocol          = "HTTP"
 
   default_action {
