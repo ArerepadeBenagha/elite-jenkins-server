@@ -23,7 +23,7 @@ resource "aws_lb" "jenkinslb" {
   idle_timeout       = "60"
 
   access_logs {
-    bucket  = aws_s3_bucket.logs_s3dev.bucket
+    bucket  = aws_s3_bucket.jenkinss3dev.bucket
     prefix  = join("-", [local.application.app_name, "jenkinslb-s3logs"])
     enabled = true
   }
@@ -91,7 +91,7 @@ resource "aws_lb_listener" "jenkins_lblist" {
 }
 
 ########------- S3 Bucket -----------####
-resource "aws_s3_bucket" "logs_s3dev" {
+resource "aws_s3_bucket" "jenkinss3dev" {
   bucket = join("-", [local.application.app_name, "logdev"])
   acl    = "private"
 
@@ -99,8 +99,8 @@ resource "aws_s3_bucket" "logs_s3dev" {
     { Name = "jenkinsserver"
   bucket = "private" })
 }
-resource "aws_s3_bucket_policy" "logs_s3dev" {
-  bucket = aws_s3_bucket.logs_s3dev.id
+resource "aws_s3_bucket_policy" "jenkinss3dev" {
+  bucket = aws_s3_bucket.jenkinss3dev.id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -112,8 +112,8 @@ resource "aws_s3_bucket_policy" "logs_s3dev" {
         Principal = "*"
         Action    = "s3:*"
         Resource = [
-          aws_s3_bucket.logs_s3dev.arn,
-          "${aws_s3_bucket.logs_s3dev.arn}/*",
+          aws_s3_bucket.jenkinss3dev.arn,
+          "${aws_s3_bucket.jenkinss3dev.arn}/*",
         ]
         Condition = {
           NotIpAddress = {
@@ -175,7 +175,7 @@ resource "aws_acm_certificate" "jenkinscert" {
     create_before_destroy = true
   }
   tags = merge(local.common_tags,
-    { Name = "elite-jenkins-server.elitelabtools.com"
+    { Name = "jenkinsdev.elitelabtools.com"
   Cert = "jenkinscert" })
 }
 
@@ -210,7 +210,7 @@ resource "aws_acm_certificate_validation" "jenkinscert" {
 ##------- ALB Alias record ----------##
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.main-zone.zone_id
-  name    = "elite-jenkins-devserver.elitelabtools.com"
+  name    = "jenkinsdev.elitelabtools.com"
   type    = "A"
 
   alias {
