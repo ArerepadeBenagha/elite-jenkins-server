@@ -3,7 +3,7 @@ resource "aws_instance" "jenkinsserver" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.main-public-1.id
-  key_name               = data.aws_key_pair.key
+  key_name               = data.aws_key_pair.key_name
   vpc_security_group_ids = [aws_security_group.ec2-sg.id, aws_security_group.main-alb.id]
   user_data_base64       = data.cloudinit_config.userdata.rendered
   lifecycle {
