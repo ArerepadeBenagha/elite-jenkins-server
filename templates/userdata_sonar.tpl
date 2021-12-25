@@ -22,3 +22,14 @@ wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key a
 sudo apt-get -y install postgresql postgresql-contrib
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
+
+//Install SonarQube
+cd /tmp
+wget 
+https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.9.6.50800.zip
+sudo unzip 
+sonarqube-8.9.6.50800.zip -d /opt
+sudo mv /opt/ sonarqube-8.9.6.50800 /opt/sonarqube
+sudo groupadd sonar
+sudo useradd -c "user to run SonarQube" -d /opt/sonarqube -g sonar sonar
+sudo chown sonar:sonar /opt/sonarqube -R
