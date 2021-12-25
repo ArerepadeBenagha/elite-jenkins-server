@@ -36,58 +36,58 @@ resource "aws_key_pair" "mykeypair" {
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC98/ZrwBNqrQ662KrQGnUxUXg9EInl0rJP5OTVXzVoM+8gtD84Mgwap6L3NvC3BLRIzAjMb07P20CqOF8b+UVUT8Xoo4NKtkEZRyRLWcZQX8pIU/HcH1euejlC1w7SO5tlq5EY56TwF9oTIRzROwE3TkaKDpP27bQFZBVvoFnRBwwPWeP4BqmCZGk3THQOLoHkLNI0exX1ekSi/VrgWv7K38BIuDNQWzN75Yi5ZeLMYx50EAzIRtPqZgjJU9w3RjlDQCZr/y5epwc3+25SPU5V1+lIA5YeKQyFv/h9rVOajwfxdurq7ErpSV3mCh026Kdi9PS9SN5QaChKR4hxy2fgsWhzOMU89LoWx9q4Ho7zesQWUcapWiEVFRB6olN7IcVd7DpNy/JvCEAkTHj664LITV4NZla4mBea8pwPiZWRBkJo2RoC1Oz6m1H8xWn6l0KNhRiJzzxKzSreUZATh6gYZz4J32CyaLEVYHq0NncL5PjaPmiLvbpZbke0aL/6abs= lbena@LAPTOP-QB0DU4OG"
 }
 
-###------- ALB Health Check -------###
-resource "aws_lb_target_group" "sonar_tglb" {
-  name     = join("-", [local.application.app_name, "sonartglb"])
-  port     = 9000
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
+# ###------- ALB Health Check -------###
+# resource "aws_lb_target_group" "sonar_tglb" {
+#   name     = join("-", [local.application.app_name, "sonartglb"])
+#   port     = 9000
+#   protocol = "HTTP"
+#   vpc_id   = aws_vpc.main.id
 
-  health_check {
-    path                = "/"
-    port                = "traffic-port"
-    protocol            = "HTTP"
-    healthy_threshold   = "5"
-    unhealthy_threshold = "2"
-    timeout             = "5"
-    interval            = "30"
-    matcher             = "200,403"
-  }
-}
-resource "aws_lb_target_group_attachment" "sonar_tglbat" {
-  target_group_arn = aws_lb_target_group.sonar_tglb.arn
-  target_id        = aws_instance.sonarserver.id
-  port             = 9000
-}
+#   health_check {
+#     path                = "/"
+#     port                = "traffic-port"
+#     protocol            = "HTTP"
+#     healthy_threshold   = "5"
+#     unhealthy_threshold = "2"
+#     timeout             = "5"
+#     interval            = "30"
+#     matcher             = "200,403"
+#   }
+# }
+# resource "aws_lb_target_group_attachment" "sonar_tglbat" {
+#   target_group_arn = aws_lb_target_group.sonar_tglb.arn
+#   target_id        = aws_instance.sonarserver.id
+#   port             = 9000
+# }
 
-# # ####-------- SSL Cert ------#####
-resource "aws_lb_listener" "sonar_lblist2" {
-  load_balancer_arn = aws_lb.sonarlb.arn
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/7008d545-c0ae-4874-af49-285a0491b88c"
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.sonar_tglb.arn
-  }
-}
+# # # ####-------- SSL Cert ------#####
+# resource "aws_lb_listener" "sonar_lblist2" {
+#   load_balancer_arn = aws_lb.sonarlb.arn
+#   port              = "443"
+#   protocol          = "HTTPS"
+#   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+#   certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/7008d545-c0ae-4874-af49-285a0491b88c"
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.sonar_tglb.arn
+#   }
+# }
 
-####---- Redirect Rule -----####
-resource "aws_lb_listener" "sonar_lblist" {
-  load_balancer_arn = aws_lb.sonarlb.arn
-  port              = "9000"
-  protocol          = "HTTP"
+# ####---- Redirect Rule -----####
+# resource "aws_lb_listener" "sonar_lblist" {
+#   load_balancer_arn = aws_lb.sonarlb.arn
+#   port              = "9000"
+#   protocol          = "HTTP"
 
-  default_action {
-    type = "redirect"
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
+#   default_action {
+#     type = "redirect"
+#     redirect {
+#       port        = "443"
+#       protocol    = "HTTPS"
+#       status_code = "HTTP_301"
+#     }
+#   }
+# }
 
 ########------- S3 Bucket -----------####
 resource "aws_s3_bucket" "logs_s3dev" {
