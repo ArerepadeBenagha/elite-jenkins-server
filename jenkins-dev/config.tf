@@ -15,7 +15,7 @@ terraform {
     organization = "EliteSolutionsIT"
 
     workspaces {
-      name = "elite-gh-actions-jenkins-dev"
+      name = "elite-jenkins-server"
     }
   }
 }
