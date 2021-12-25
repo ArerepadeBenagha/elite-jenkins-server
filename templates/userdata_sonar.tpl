@@ -7,11 +7,11 @@ sudo apt install postgresql postgresql-contrib -y
 sudo systemctl enable postgresql
 sudo systemctl start postgresql
 
-/////sonar
 sudo apt-get install zip -y
-sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.2.4.50792.zip
-sudo unzip sonarqube-9.2.4.50792.zip
-sudo mv sonarqube-9.2.4.50792 /opt/sonarqube
+wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.0.1.46107.zip
+sudo unzip sonarqube-*.zip -d /opt
+sudo mv /opt/sonarqube-* /opt/sonarqube
+
 sudo groupadd sonar
 sudo useradd -d /opt/sonarqube -g sonar sonar
 sudo chown sonar:sonar /opt/sonarqube -R
