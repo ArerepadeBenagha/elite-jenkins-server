@@ -61,17 +61,17 @@ resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
 }
 
 # # ####-------- SSL Cert ------#####
-# resource "aws_lb_listener" "jenkins_lblist2" {
-#   load_balancer_arn = aws_lb.jenkinslb.arn
-#   port              = "443"
-#   protocol          = "HTTPS"
-#   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-#   certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/f3e1c14c-94cb-4c7f-b150-df5996c52f18"
-#   default_action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.jenkins_tglb.arn
-#   }
-# }
+resource "aws_lb_listener" "jenkins_lblist2" {
+  load_balancer_arn = aws_lb.jenkinslb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/aaafbb0d-2122-4da7-ac82-dac049bdcfdf"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.jenkins_tglb.arn
+  }
+}
 
 
 ####---- Redirect Rule -----####
