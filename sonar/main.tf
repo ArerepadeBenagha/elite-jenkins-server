@@ -33,9 +33,8 @@ resource "aws_lb" "sonarlb" {
 }
 resource "aws_key_pair" "mykeypair" {
   key_name   = "mykeypair"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC98/ZrwBNqrQ662KrQGnUxUXg9EInl0rJP5OTVXzVoM+8gtD84Mgwap6L3NvC3BLRIzAjMb07P20CqOF8b+UVUT8Xoo4NKtkEZRyRLWcZQX8pIU/HcH1euejlC1w7SO5tlq5EY56TwF9oTIRzROwE3TkaKDpP27bQFZBVvoFnRBwwPWeP4BqmCZGk3THQOLoHkLNI0exX1ekSi/VrgWv7K38BIuDNQWzN75Yi5ZeLMYx50EAzIRtPqZgjJU9w3RjlDQCZr/y5epwc3+25SPU5V1+lIA5YeKQyFv/h9rVOajwfxdurq7ErpSV3mCh026Kdi9PS9SN5QaChKR4hxy2fgsWhzOMU89LoWx9q4Ho7zesQWUcapWiEVFRB6olN7IcVd7DpNy/JvCEAkTHj664LITV4NZla4mBea8pwPiZWRBkJo2RoC1Oz6m1H8xWn6l0KNhRiJzzxKzSreUZATh6gYZz4J32CyaLEVYHq0NncL5PjaPmiLvbpZbke0aL/6abs= lbena@LAPTOP-QB0DU4OG"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCvyFRmaK7ZfeeYxLp5uhjRSk6LMFhZlb7y+WzAVDOYwpeuV8wIn8/iyXQvPepxtjDpuIK0nqIXzTbiwzigKF7kksZkYRpa3QKCKNVewrd2D8bBqUEbBD7UMjhGkbpLvVZmqaP3Wc6+ufYbKjMO+wDej0bd1iCIoDATRfm9R44gNl++hBD/Ed5Km936zZ6h+g6C1ZCLFj9FV8Fk54fbZV8z+NVdSNDNU7BxX3+vX3cUrRshT7VpVi6ccsOGU3l6OkXaw8NuMSW2xixhbrJR0K8jrkrxhuSya5GpsCngUFe9+DATF8G7y7TCMvi7m64vURX2oOY25sL+S4np129uuzXodS6iTgBIWaGzMNLeQMn4HhlBMkAwXUian9BqpS8rEkFpEHi0yFeUNPLW3ee/kLYDz4h4SnuU+y1T9q7fKINq8rfPIzx7Mtou0KHTgx2kGiSGTmZVOuTBcR63e9V+SvYonm7B8UxBjip+BZYlO3A4gbd6csbGuKy90PTdPMqFMT0= lbena@LAPTOP-QB0DU4OG"
 }
-
 # ###------- ALB Health Check -------###
 resource "aws_lb_target_group" "sonar_tglb" {
   name     = join("-", [local.application.app_name, "sonartglb"])
@@ -66,7 +65,7 @@ resource "aws_lb_listener" "sonar_lblist2" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/4b2acaa0-0f6b-4f27-a191-6fd32d55efa6"
+  certificate_arn   = aws_acm_certificate.sonarcert.arn
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.sonar_tglb.arn
