@@ -300,7 +300,7 @@ resource "aws_route53_record" "www" {
     evaluate_target_health = true
   }
 }
-resource "aws_route53_record" "www" {
+resource "aws_route53_record" "www_jenkins" {
   zone_id = data.aws_route53_zone.main-zone.zone_id
   name    = "jenkinsdev.elitelabtools.com"
   type    = "A"
