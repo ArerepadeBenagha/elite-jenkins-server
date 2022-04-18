@@ -90,21 +90,21 @@ resource "aws_lb_listener" "sonar_lblist2" {
   certificate_arn   = aws_acm_certificate.sonarcert.arn
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.sonar_tglb.arn
+    target_group_arns = [aws_lb_target_group.sonar_tglb.arn, aws_lb_target_group.jenkins_tglb.arn]
   }
 }
 
-resource "aws_lb_listener" "jenkins_lblist2" {
-  load_balancer_arn = aws_lb.sonarlb.arn
-  port              = "443"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = aws_acm_certificate.jenkinscert.arn
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.jenkins_tglb.arn
-  }
-}
+# resource "aws_lb_listener" "jenkins_lblist2" {
+#   load_balancer_arn = aws_lb.sonarlb.arn
+#   port              = "443"
+#   protocol          = "HTTPS"
+#   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+#   certificate_arn   = aws_acm_certificate.jenkinscert.arn
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.jenkins_tglb.arn
+#   }
+# }
 
 ####---- Redirect Rule -----####
 resource "aws_lb_listener" "sonar_lblist" {
