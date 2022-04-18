@@ -32,8 +32,8 @@ resource "aws_lb" "jenkinslb" {
   Application = "public" })
 }
 resource "aws_key_pair" "mykeypair" {
-  key_name   = "mykeypair"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCuum2I/6C2QTl0OteUx++9/rUbUxwnY6Qs+6dCNp4ZRKetUi79EgS7YmzTj1rTV7r7j+ogT9TK4MV3EsBv++1wsFGivP5p9jn/Mgx0TeO5Kw795+PPGcNs1DSUoy5mruVUWgJ+9VtFu37w61XdG5MIpzPsiCT0yBxLTb2+ElvXo4miCB8NvL8gw43coqvXFLE8+IPzhmu9VxrWdnDDcfp/JHtljoxybPAIO6GORIQufcj1vrrMj2HFZf4q8odz73fWQE9kZvNTb1TDMjazZbrkv5ODgIhoZR5RY5LROetZGh92Cs4NHBxmSe9zpgUqWbD5lGHVS655JfL8sFMnZ7tSlXPHdp4dlpGZ42U8s8Z6b4CFo5ec2NrATmHqXCPkIXEtQqlFA80h/DxWqkAoECx+S2xFzGrTPV3sTqTi/GCPFulne9rXCC8bPzinLzQT5h2ongD1/LVVo76AfrBSvpHsMj4EOh0MbVz3m9deG0Jopqi+uULeLdBm9sYgRLLrPoc= lbena@LAPTOP-QB0DU4OG"
+  key_name   = "jenkinskey"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDLxK5hAuLECDZV86BUQ0kjgOZ7mOjoytOMPYUy0GmE9HA6PpIQZQwKyLWP+ERUbTfjWAeoHT1I1qwQqE8fTQ5leoie0nxyJB17UDkMd/pgyZTKD6M6mDvm347uuymq4dJYp/X2bdF7EnVKPJk+eME3aXOQiO6tAVXRgwfuXdteADTcqTq1WrSUtkagRroiCoZ/RTr289XZzZlOpxe6dDz0//YuXOUtPeptBFtM0WuJccRBJ578At0vhuD9NkFEnvTvx1xa1Qd3luVuyi5UWqt+OSli6o2vH4w13GjnGs2uJNJsmv84eVpz+Kpuq5zoPYr9rnlFiLXNCfgDcDZu8L+/Zb4hfDJ5aPuyKM0O1PAM7b2MadfFjaJZj2msmX2/ZT8gnL0wnh7YDgXW9y1iRGxd69plZ8gniZoFSHsWT/C/rMNW0oVAabAMa0kdcdE8YCAcHT1MGVjAkJXFOvXkDM1JMM1WVa/L+ZadTLmln8ndqieZWl3UPSeeQqQZ+fK1EdU= lbena@LAPTOP-QB0DU4OG"
 }
 
 ###------- ALB Health Check -------###
@@ -66,7 +66,7 @@ resource "aws_lb_listener" "jenkins_lblist2" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = "arn:aws:acm:us-east-1:375866976303:certificate/aaafbb0d-2122-4da7-ac82-dac049bdcfdf"
+  certificate_arn   = aws_acm_certificate.jenkinscert.arn
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.jenkins_tglb.arn
