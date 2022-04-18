@@ -234,7 +234,7 @@ resource "aws_acm_certificate" "jenkinscert" {
   }
   tags = merge(local.common_tags,
     { Name = "jenkinsdev.elitelabtools.com"
-  Cert = "sonarcert" })
+  Cert = "jenkinscert" })
 }
 
 ###------- Cert Validation -------###
