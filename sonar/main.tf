@@ -90,7 +90,7 @@ resource "aws_lb_listener" "sonar_lblist2" {
   certificate_arn   = aws_acm_certificate.sonarcert.arn
   default_action {
     type             = "forward"
-    target_group_arns = [aws_lb_target_group.sonar_tglb.arn, aws_lb_target_group.jenkins_tglb.arn]
+    target_group_arn = [aws_lb_target_group.sonar_tglb.arn, aws_lb_target_group.jenkins_tglb.arn]
   }
 }
 
