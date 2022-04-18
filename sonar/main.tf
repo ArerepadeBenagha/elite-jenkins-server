@@ -58,29 +58,7 @@ resource "aws_lb_target_group_attachment" "sonar_tglbat" {
   target_id        = aws_instance.sonarserver.id
   port             = 9000
 }
-/// Jenkins
-resource "aws_lb_target_group" "jenkins_tglb" {
-  name     = join("-", [local.application.app_name, "jenkinstglb"])
-  port     = 8080
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
 
-  health_check {
-    path                = "/"
-    port                = "traffic-port"
-    protocol            = "HTTP"
-    healthy_threshold   = "5"
-    unhealthy_threshold = "2"
-    timeout             = "5"
-    interval            = "30"
-    matcher             = "200"
-  }
-}
-resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
-  target_group_arn = aws_lb_target_group.jenkins_tglb.arn
-  target_id        = aws_instance.sonarserver.id
-  port             = 8080
-}
 # # ####-------- SSL Cert ------#####
 resource "aws_lb_listener" "sonar_lblist2" {
   load_balancer_arn = aws_lb.sonarlb.arn
@@ -90,41 +68,14 @@ resource "aws_lb_listener" "sonar_lblist2" {
   certificate_arn   = aws_acm_certificate.sonarcert.arn
   default_action {
     type             = "forward"
-    target_group_arn = [aws_lb_target_group.sonar_tglb.arn, aws_lb_target_group.jenkins_tglb.arn]
+    target_group_arn = aws_lb_target_group.sonar_tglb.arn
   }
 }
-
-# resource "aws_lb_listener" "jenkins_lblist2" {
-#   load_balancer_arn = aws_lb.sonarlb.arn
-#   port              = "443"
-#   protocol          = "HTTPS"
-#   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-#   certificate_arn   = aws_acm_certificate.jenkinscert.arn
-#   default_action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.jenkins_tglb.arn
-#   }
-# }
 
 ####---- Redirect Rule -----####
 resource "aws_lb_listener" "sonar_lblist" {
   load_balancer_arn = aws_lb.sonarlb.arn
   port              = "9000"
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
-
-resource "aws_lb_listener" "jenkins_lblist" {
-  load_balancer_arn = aws_lb.sonarlb.arn
-  port              = "8080"
   protocol          = "HTTP"
 
   default_action {
@@ -226,17 +177,6 @@ resource "aws_acm_certificate" "sonarcert" {
   Cert = "sonarcert" })
 }
 
-resource "aws_acm_certificate" "jenkinscert" {
-  domain_name       = "*.elitelabtools.com"
-  validation_method = "DNS"
-  lifecycle {
-    create_before_destroy = true
-  }
-  tags = merge(local.common_tags,
-    { Name = "jenkinsdev.elitelabtools.com"
-  Cert = "jenkinscert" })
-}
-
 ###------- Cert Validation -------###
 data "aws_route53_zone" "main-zone" {
   name         = "elitelabtools.com"
@@ -265,44 +205,10 @@ resource "aws_acm_certificate_validation" "sonarcert" {
   validation_record_fqdns = [for record in aws_route53_record.sonarzone_record : record.fqdn]
 }
 
-/////Jenkins
-resource "aws_route53_record" "jenkinszone_record" {
-  for_each = {
-    for dvo in aws_acm_certificate.jenkinscert.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = data.aws_route53_zone.main-zone.zone_id
-}
-
-resource "aws_acm_certificate_validation" "jenkinscert" {
-  certificate_arn         = aws_acm_certificate.jenkinscert.arn
-  validation_record_fqdns = [for record in aws_route53_record.jenkinszone_record : record.fqdn]
-}
-
 ##------- ALB Alias record ----------##
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.main-zone.zone_id
   name    = "sonardev.elitelabtools.com"
-  type    = "A"
-
-  alias {
-    name                   = aws_lb.sonarlb.dns_name
-    zone_id                = aws_lb.sonarlb.zone_id
-    evaluate_target_health = true
-  }
-}
-resource "aws_route53_record" "www_jenkins" {
-  zone_id = data.aws_route53_zone.main-zone.zone_id
-  name    = "jenkinsdev.elitelabtools.com"
   type    = "A"
 
   alias {
@@ -339,16 +245,9 @@ resource "aws_security_group" "ec2-sg" {
     security_groups = [aws_security_group.main-alb.id]
   }
 
-  ingress {
+    ingress {
     from_port       = 5432
     to_port         = 5432
-    protocol        = "tcp"
-    security_groups = [aws_security_group.main-alb.id]
-  }
-
-  ingress {
-    from_port       = 8080
-    to_port         = 8080
     protocol        = "tcp"
     security_groups = [aws_security_group.main-alb.id]
   }
@@ -377,13 +276,7 @@ resource "aws_security_group" "main-alb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
+    ingress {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
