@@ -77,7 +77,7 @@ resource "aws_lb_target_group" "jenkins_tglb" {
   }
 }
 resource "aws_lb_target_group_attachment" "jenkins_tglbat" {
-  target_group_arn = aws_lb_target_group.sonar_tglb.arn
+  target_group_arn = aws_lb_target_group.jenkins_tglb.arn
   target_id        = aws_instance.sonarserver.id
   port             = 8080
 }
