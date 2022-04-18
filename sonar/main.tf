@@ -291,6 +291,17 @@ resource "aws_acm_certificate_validation" "jenkinscert" {
 ##------- ALB Alias record ----------##
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.main-zone.zone_id
+  name    = "sonardev.elitelabtools.com"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.sonarlb.dns_name
+    zone_id                = aws_lb.sonarlb.zone_id
+    evaluate_target_health = true
+  }
+}
+resource "aws_route53_record" "www" {
+  zone_id = data.aws_route53_zone.main-zone.zone_id
   name    = "jenkinsdev.elitelabtools.com"
   type    = "A"
 
