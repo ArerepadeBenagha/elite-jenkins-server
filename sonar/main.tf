@@ -33,7 +33,7 @@ resource "aws_lb" "sonarlb" {
 }
 resource "aws_key_pair" "mykeypair" {
   key_name   = "mykeypair"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCvyFRmaK7ZfeeYxLp5uhjRSk6LMFhZlb7y+WzAVDOYwpeuV8wIn8/iyXQvPepxtjDpuIK0nqIXzTbiwzigKF7kksZkYRpa3QKCKNVewrd2D8bBqUEbBD7UMjhGkbpLvVZmqaP3Wc6+ufYbKjMO+wDej0bd1iCIoDATRfm9R44gNl++hBD/Ed5Km936zZ6h+g6C1ZCLFj9FV8Fk54fbZV8z+NVdSNDNU7BxX3+vX3cUrRshT7VpVi6ccsOGU3l6OkXaw8NuMSW2xixhbrJR0K8jrkrxhuSya5GpsCngUFe9+DATF8G7y7TCMvi7m64vURX2oOY25sL+S4np129uuzXodS6iTgBIWaGzMNLeQMn4HhlBMkAwXUian9BqpS8rEkFpEHi0yFeUNPLW3ee/kLYDz4h4SnuU+y1T9q7fKINq8rfPIzx7Mtou0KHTgx2kGiSGTmZVOuTBcR63e9V+SvYonm7B8UxBjip+BZYlO3A4gbd6csbGuKy90PTdPMqFMT0= lbena@LAPTOP-QB0DU4OG"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC5OS4XQssj/ySNaSlTQ+ToMeFgggyaDzLYVgVecOnHG2wrLbVnmvqt/ujdEZGhdcHVtlaEgBnjpoWB8CbUkjN280VDD6CLEwlT7pWM9JxXApkAt/uNiabeSeows2CReGz+KsOu3sYQRLl0M/++NfDzdjYNudeVoyMwXvuvL1x06cDRUs1FSVmRFeaHd99rOWHzCMnwOlCpqBNrzcvvcxG+dW2+N2QzoSylIyuUs4QVnV4yRPd/4VSBI6N08F43AcBqDGgUoNOsuUq+TFf957Ejo+vORUmLz0hFPHNgVsiMjK0ASp9ykLnGBT5bwGaXwMIA9C1gGTvN7ZZyTbMcZNNgRy9IxElJgWgNGqfQZ8qyd+jjitcs8Kx0UWAIv6I7ocnfV5cgWR1RB3DXuguogX7Me3WbDU9Qq8V4EkUJATp967MrsVQDNRTETE8oIcVV10W5DrBI2gzj5y92JdzKvrmFjqwqmddZeBfd70xD5sGchtR9ZWZsMs8YqgFgsmzURas= lbena@LAPTOP-QB0DU4OG"
 }
 # ###------- ALB Health Check -------###
 resource "aws_lb_target_group" "sonar_tglb" {
