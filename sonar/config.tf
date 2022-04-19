@@ -15,7 +15,7 @@ terraform {
     organization = "EliteSolutionsIT"
 
     workspaces {
-      name = "elite-gh-actions-sonar"
+      name = "elite-jenkins-server-sonar"
     }
   }
 }
