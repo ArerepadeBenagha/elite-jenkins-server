@@ -1,8 +1,8 @@
 #! /bin/bash
 # switch to root and apend initialAdminPassword
 sudo su -
-mkdir jenkins_temp
-cd jenkins_temp && touch jenkins-secrets.txt
+# mkdir jenkins_temp
+# cd jenkins_temp && touch jenkins-secrets.txt
 
 # install Java package
 apt-get update -y
@@ -19,5 +19,5 @@ apt-get update -y
 apt-get install jenkins -y
 systemctl start jenkins
 
-cd jenkins_temp
-cat /var/lib/jenkins/secrets/initialAdminPassword >> jenkins-secrets.txt
+# cd jenkins_temp
+# cat /var/lib/jenkins/secrets/initialAdminPassword >> jenkins-secrets.txt
