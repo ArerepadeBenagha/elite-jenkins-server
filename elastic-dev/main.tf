@@ -11,6 +11,12 @@ resource "aws_instance" "elastic-1" {
   tags = merge(local.common_tags, { Name = "elastic-server-1", Application = "public" })
 }
 
+resource "aws_ebs_volume" "ebs-vol1" {
+  availability_zone = "us-east-1a"
+  size              = 200
+  tags = merge(local.common_tags, { Name = "ebs-vol1", Application = "public" })
+}
+
 resource "aws_key_pair" "mykeypair" {
   key_name   = "elastickey"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDdBWlQgwWW6oh6sgEBEG5GfVWKEOQS+ll7u3rQvohNI2ZWrLvkY87408I5jfspOElI9op4SF1MGwgbt2e6gnmeES3BK2ZKtHu0soHWNtA8Zne7//LQJ1fHxfrTpIYqbvJqFCzMj5Zj+QPVE36umWKZMy/w2Otfw+yE63xpraRyWCLaWYaHWh4uxvTtw55g9d9YV41RclbCjkqjsRCaOpD/vUqo9smDFey6+Qzcjj8u6tO4HCmjG98E4EDH4tyHQBjzWkjybgg+jmLHxT99Qq0+HjZNtHicvdahC0lB94ZnFTOTFJSbc28PmMBkFZ1q0Y3uSkrCMPdOBGETj9ZvL5rIJLhP5hCywO8lXzcITpeaUFOk5/cwcChg0R96B/VOx/RYpFe43ZvbI+PLhe2IIvC6lrHSz95bAqQSLwNrfPqFVUWqrJVdAmbY5/ydVPfSB46Uq4Kqem7RdE/OoBGKnpHFAguYX13fg0nst7cVsmP7k3Ax9r2agA3U2hqLS5Gt2Ik= lbena@LAPTOP-QB0DU4OG"
@@ -28,6 +34,12 @@ resource "aws_instance" "elastic-2" {
   tags = merge(local.common_tags, { Name = "elastic-server-2", Application = "public" })
 }
 
+resource "aws_ebs_volume" "ebs-vol2" {
+  availability_zone = "us-east-1b"
+  size              = 200
+  tags = merge(local.common_tags, { Name = "ebs-vol2", Application = "public" })
+}
+
 resource "aws_instance" "elastic-3" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t3.medium"
@@ -38,6 +50,12 @@ resource "aws_instance" "elastic-3" {
     ignore_changes = [ami]
   }
   tags = merge(local.common_tags, { Name = "elastic-server-3", Application = "public" })
+}
+
+resource "aws_ebs_volume" "ebs-vol3" {
+  availability_zone = "us-east-1c"
+  size              = 200
+  tags = merge(local.common_tags, { Name = "ebs-vol3", Application = "public" })
 }
 
 
@@ -163,6 +181,14 @@ resource "aws_security_group" "elastic" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+    ingress {
+    from_port   = 8200
+    to_port     = 8200
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
 
   egress {
     from_port   = 0
