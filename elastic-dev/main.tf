@@ -1,4 +1,4 @@
-###########------ elaastice Server -----########
+###########------ elastic Server -----########
 resource "aws_instance" "elastic-1" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t2.2xlarge"
