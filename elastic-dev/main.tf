@@ -16,6 +16,11 @@ resource "aws_ebs_volume" "ebs-vol1" {
   size              = 200
   tags = merge(local.common_tags, { Name = "ebs-vol1", Application = "public" })
 }
+resource "aws_volume_attachment" "ebs_att-1" {
+  device_name = "/dev/sdc"
+  volume_id   = aws_ebs_volume.ebs-vol1.id
+  instance_id = aws_instance.elastic-1.id
+}
 
 resource "aws_key_pair" "mykeypair" {
   key_name   = "elastickey"
@@ -40,6 +45,12 @@ resource "aws_ebs_volume" "ebs-vol2" {
   tags = merge(local.common_tags, { Name = "ebs-vol2", Application = "public" })
 }
 
+resource "aws_volume_attachment" "ebs_att-2" {
+  device_name = "/dev/sdc"
+  volume_id   = aws_ebs_volume.ebs-vol2.id
+  instance_id = aws_instance.elastic-2.id
+}
+
 resource "aws_instance" "elastic-3" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t3.medium"
@@ -58,6 +69,11 @@ resource "aws_ebs_volume" "ebs-vol3" {
   tags = merge(local.common_tags, { Name = "ebs-vol3", Application = "public" })
 }
 
+resource "aws_volume_attachment" "ebs_att-3" {
+  device_name = "/dev/sdc"
+  volume_id   = aws_ebs_volume.ebs-vol3.id
+  instance_id = aws_instance.elastic-3.id
+}
 
 ////VPC
 # Vars.tf
