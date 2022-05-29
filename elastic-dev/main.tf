@@ -4,7 +4,7 @@ resource "aws_instance" "elastic-1" {
   instance_type          = "t2.2xlarge"
   subnet_id              = aws_subnet.main-public-1.id
   key_name               = aws_key_pair.mykeypair.key_name
-  vpc_security_group_ids = [aws_security_group.elastic.id]
+  vpc_security_group_ids = [aws_security_group.elastic.id, aws_security_group.main-alb.id]
   lifecycle {
     ignore_changes = [ami]
   }
@@ -221,4 +221,36 @@ resource "aws_security_group" "elastic" {
 
   tags = merge(local.common_tags,
   { Name = "elasticgroup" })
+}
+
+
+#ALB-SG
+resource "aws_security_group" "main-alb" {
+  vpc_id      = aws_vpc.main.id
+  name        = "public web allow"
+  description = "security group for ALB"
+
+  ingress {
+    from_port   = 12443
+    to_port     = 12443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.common_tags,
+  { Name = "Alb security group" })
 }
