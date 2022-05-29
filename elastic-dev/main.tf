@@ -8,7 +8,7 @@ resource "aws_instance" "elastic-1" {
   lifecycle {
     ignore_changes = [ami]
   }
-  tags = merge(local.common_tags, { Name = "elaastic-server", Application = "public" })
+  tags = merge(local.common_tags, { Name = "elastic-server-1", Application = "public" })
 }
 
 resource "aws_key_pair" "mykeypair" {
@@ -25,7 +25,7 @@ resource "aws_instance" "elastic-2" {
   lifecycle {
     ignore_changes = [ami]
   }
-  tags = merge(local.common_tags, { Name = "elaastice-server", Application = "public" })
+  tags = merge(local.common_tags, { Name = "elastic-server-2", Application = "public" })
 }
 
 resource "aws_instance" "elastic-3" {
@@ -37,7 +37,7 @@ resource "aws_instance" "elastic-3" {
   lifecycle {
     ignore_changes = [ami]
   }
-  tags = merge(local.common_tags, { Name = "elaastic-server", Application = "public" })
+  tags = merge(local.common_tags, { Name = "elastic-server-3", Application = "public" })
 }
 
 
