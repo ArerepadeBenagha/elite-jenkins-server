@@ -17,7 +17,7 @@ resource "aws_ebs_volume" "ebs-vol1" {
   tags = merge(local.common_tags, { Name = "ebs-vol1", Application = "public" })
 }
 resource "aws_volume_attachment" "ebs_att-1" {
-  device_name = "/dev/sdb"
+  device_name = "/dev/sdh"
   volume_id   = aws_ebs_volume.ebs-vol1.id
   instance_id = aws_instance.elastic-1.id
 }
@@ -46,7 +46,7 @@ resource "aws_ebs_volume" "ebs-vol2" {
 }
 
 resource "aws_volume_attachment" "ebs_att-2" {
-  device_name = "/dev/sdb"
+  device_name = "/dev/sdh"
   volume_id   = aws_ebs_volume.ebs-vol2.id
   instance_id = aws_instance.elastic-2.id
 }
@@ -70,7 +70,7 @@ resource "aws_ebs_volume" "ebs-vol3" {
 }
 
 resource "aws_volume_attachment" "ebs_att-3" {
-  device_name = "/dev/sdb"
+  device_name = "/dev/sdh"
   volume_id   = aws_ebs_volume.ebs-vol3.id
   instance_id = aws_instance.elastic-3.id
 }
