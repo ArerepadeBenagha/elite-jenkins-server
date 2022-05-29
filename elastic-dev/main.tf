@@ -227,7 +227,7 @@ resource "aws_security_group" "elastic" {
 #ALB-SG
 resource "aws_security_group" "main-alb" {
   vpc_id      = aws_vpc.main.id
-  name        = "public web allow"
+  name        = "public alb allow"
   description = "security group for ALB"
 
   ingress {
