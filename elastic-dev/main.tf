@@ -1,6 +1,6 @@
 ###########------ elastic Server -----########
 resource "aws_instance" "elastic-1" {
-  ami                    = data.aws_ami.ubuntu.id
+  ami                    = "ami-09d56f8956ab235b3"
   instance_type          = "t2.2xlarge"
   subnet_id              = aws_subnet.main-public-1.id
   key_name               = aws_key_pair.mykeypair.key_name
@@ -28,7 +28,7 @@ resource "aws_key_pair" "mykeypair" {
 }
 
 resource "aws_instance" "elastic-2" {
-  ami                    = data.aws_ami.ubuntu.id
+  ami                    = "ami-09d56f8956ab235b3"
   instance_type          = "t2.2xlarge"
   subnet_id              = aws_subnet.main-public-2.id
   key_name               = aws_key_pair.mykeypair.key_name
@@ -52,7 +52,7 @@ resource "aws_volume_attachment" "ebs_att-2" {
 }
 
 resource "aws_instance" "elastic-3" {
-  ami                    = data.aws_ami.ubuntu.id
+  ami                    = "ami-09d56f8956ab235b3"
   instance_type          = "t2.2xlarge"
   subnet_id              = aws_subnet.main-public-3.id
   key_name               = aws_key_pair.mykeypair.key_name
