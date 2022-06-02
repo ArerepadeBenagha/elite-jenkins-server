@@ -92,7 +92,7 @@ resource "aws_lb_listener" "jenkins_lblist" {
 
 ########------- S3 Bucket -----------####
 resource "aws_s3_bucket" "jenkinss3dev" {
-  bucket = join("-", [local.application.app_name, "logdev"])
+  bucket = join("-", [local.application.app_name, "elite-logs"])
   acl    = "private"
 
   tags = merge(local.common_tags,
