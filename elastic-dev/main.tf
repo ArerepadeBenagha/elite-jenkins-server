@@ -150,16 +150,16 @@ resource "aws_security_group" "elastic" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    ingress {
-    from_port   = 8200
-    to_port     = 8200
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+#     ingress {
+#     from_port   = 8200
+#     to_port     = 8200
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
 
     ingress {
-    from_port   = 12443
-    to_port     = 12443
+    from_port   = 9200
+    to_port     = 9200
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -183,8 +183,8 @@ resource "aws_security_group" "main-alb" {
   description = "security group for ALB"
 
   ingress {
-    from_port   = 12443
-    to_port     = 12443
+    from_port   = 9200
+    to_port     = 9200
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
