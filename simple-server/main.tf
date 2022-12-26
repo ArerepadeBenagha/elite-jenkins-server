@@ -105,7 +105,7 @@ resource "aws_internet_gateway" "main-gw" {
 resource "aws_route_table" "main-public" {
   vpc_id = aws_vpc.main.id
   route {
-    cidr_block = "76.198.149.152/32"
+    cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.main-gw.id
   }
 
