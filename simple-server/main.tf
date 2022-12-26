@@ -105,7 +105,7 @@ resource "aws_internet_gateway" "main-gw" {
 resource "aws_route_table" "main-public" {
   vpc_id = aws_vpc.main.id
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = "76.198.149.152/32"
     gateway_id = aws_internet_gateway.main-gw.id
   }
 
@@ -130,29 +130,29 @@ resource "aws_route_table_association" "main-public-3-a" {
 
 resource "aws_security_group" "simpleserver" {
   vpc_id      = aws_vpc.main.id
-  name        = "public web allow"
+  name        = "public-web-allow"
   description = "security group for ubuntuserver"
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["76.198.149.152/32"]
   }
-  
-  ingress {
-  from_port   = 80
-  to_port     = 80
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
-}
 
   ingress {
-from_port   = 3306
-to_port     = 3306
-protocol    = "tcp"
-cidr_blocks = ["0.0.0.0/0"]
-}
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["76.198.149.152/32"]
+  }
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["76.198.149.152/32"]
+  }
   egress {
     from_port   = 0
     to_port     = 0
