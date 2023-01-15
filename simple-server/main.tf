@@ -1,6 +1,6 @@
 ###########------ simple Server -----########
 resource "aws_instance" "simpleserver" {
-  ami                    = data.aws_ami.ubuntu.id #"ami-0b5eea76982371e91"
+  ami                    = "ami-0b5eea76982371e91" #data.aws_ami.ubuntu.id #"ami-0b5eea76982371e91"
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.main-public-1.id
   key_name               = aws_key_pair.mykeypair.key_name
