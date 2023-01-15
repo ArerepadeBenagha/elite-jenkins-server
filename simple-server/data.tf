@@ -21,6 +21,6 @@ data "cloudinit_config" "userdata" {
   part {
     content_type = "text/x-shellscript"
     filename     = "userdata_php"
-    content      = templatefile("../templates/php.tpl", {})
+    content      = templatefile("../templates/userdata_php.tpl", {})
   }
 }
