@@ -5,6 +5,8 @@ resource "aws_instance" "simpleserver" {
   subnet_id              = aws_subnet.main-public-1.id
   key_name               = aws_key_pair.mykeypair.key_name
   vpc_security_group_ids = [aws_security_group.simpleserver.id]
+  user_data_base64       = data.cloudinit_config.userdata.rendered
+
   lifecycle {
     ignore_changes = [ami]
   }

@@ -13,3 +13,14 @@ data "aws_ami" "ubuntu" {
 
   owners = ["099720109477"] # Canonical
 }
+
+data "cloudinit_config" "userdata" {
+  gzip          = true
+  base64_encode = true
+  
+  part {
+    content_type = "text/x-shellscript"
+    filename     = "userdata_php"
+    content      = templatefile("../templates/php.tpl", {})
+  }
+}
